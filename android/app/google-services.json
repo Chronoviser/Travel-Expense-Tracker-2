@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "230624672809",
+    "project_id": "travel-expense-tracker-2b862",
+    "storage_bucket": "travel-expense-tracker-2b862.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230624672809:android:8c33cb7964f57be9c37038",
+        "android_client_info": {
+          "package_name": "com.tasproductionapps.travel_expense_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "230624672809-g7dv5tg695gks9qk5eqehjjq647q185s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYWL2rlTxe3yGpOnjak5e5gFLXSBJyDBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "230624672809-g7dv5tg695gks9qk5eqehjjq647q185s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
