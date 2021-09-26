@@ -21,14 +21,12 @@ class UserHandler {
     }
   }
 
-  Future<bool> createUser({String email}) async {
-    if (email == "") {
-      email = user.email;
-    }
-
-    AppUser newUser = AppUser(email, []);
+  Future<bool> createUser() async {
+    AppUser newUser = new AppUser(user.email, []);
     try {
-      userReference.doc(user.uid).set(newUser.AppUserToJSON());
+      print(4);
+      await userReference.doc(user.uid).set(newUser.AppUserToJSON());
+      print(5);
       return true;
     } catch (e) {
       print(e.message);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:travel_expense_tracker/constants/custom-colors.dart';
 import 'package:travel_expense_tracker/screens/authentication/signUp.dart';
-import 'package:travel_expense_tracker/services/authentication-service.dart';
-import 'package:provider/provider.dart';
+import 'package:travel_expense_tracker/screens/trips/my-trips.dart';
+import 'package:travel_expense_tracker/services/auth-service.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -14,6 +14,8 @@ class SignInState extends State<SignIn> {
   final formKey = GlobalKey<FormState>();
   bool obsText = true;
 
+  AuthService authService = new AuthService();
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -23,12 +25,15 @@ class SignInState extends State<SignIn> {
         isLoading = true;
       });
 
-      context
-          .read<AuthenticationService>()
+      authService
           .signIn(
-              email: emailController.text.trim(),
-              password: passwordController.text.trim())
-          .then((value) async {
+              email: emailController.text, password: passwordController.text)
+          .then((_) {
+        print('signInUser Successful');
+        Navigator.of(context)
+            .push(PageRouteBuilder(pageBuilder: (context, _, __) => MyTrips()));
+      }).catchError((e) {
+        print('signInUser Error: $e');
         setState(() {
           isLoading = false;
         });
@@ -36,12 +41,17 @@ class SignInState extends State<SignIn> {
     }
   }
 
-  signInWithGoogle() {
+  signInWithGoogle() async {
     setState(() {
       isLoading = true;
     });
 
-    context.read<AuthenticationService>().googleLogin().then((_) {
+    authService.googleLogin().then((_) {
+      print('googleSignInUser Successful');
+      Navigator.of(context)
+          .push(PageRouteBuilder(pageBuilder: (context, _, __) => MyTrips()));
+    }).catchError((e) {
+      print('googleSignInUser Error: $e');
       setState(() {
         isLoading = false;
       });

@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:travel_expense_tracker/constants/custom-colors.dart';
 import 'package:travel_expense_tracker/constants/global-user.dart';
 import 'package:travel_expense_tracker/models/trip.dart';
+import 'package:travel_expense_tracker/screens/authentication/signIn.dart';
 import 'package:travel_expense_tracker/screens/trips/trip-details.dart';
-import 'package:travel_expense_tracker/services/authentication-service.dart';
-import 'package:provider/provider.dart';
+import 'package:travel_expense_tracker/services/auth-service.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_expense_tracker/services/trip-handler.dart';
 import 'package:travel_expense_tracker/services/user-handler.dart';
@@ -24,11 +24,21 @@ class _MyTripsState extends State<MyTrips> {
   UserHandler userHandler = new UserHandler();
   List<Trip> trips = [];
 
-  signOut() {
+  AuthService authService = new AuthService();
+
+  signOut() async {
+    setState(() {
+      fetchingData = true;
+    });
+
     GlobalUser.trips = [];
     GlobalUser.email = "";
     GlobalUser.uid = "";
-    context.read<AuthenticationService>().signOut();
+
+    await authService.signOut();
+
+    Navigator.of(context)
+        .push(PageRouteBuilder(pageBuilder: (context, _, __) => SignIn()));
   }
 
   Future<String> joinTripDialog(BuildContext context) async {
@@ -303,6 +313,9 @@ class _MyTripsState extends State<MyTrips> {
   @override
   void initState() {
     super.initState();
+
+    print('Idhar Aagaya apun!');
+
     fetchUserInfo();
   }
 

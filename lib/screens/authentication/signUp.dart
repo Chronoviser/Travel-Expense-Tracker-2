@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:travel_expense_tracker/constants/custom-colors.dart';
 import 'package:travel_expense_tracker/screens/authentication/signIn.dart';
 import 'package:travel_expense_tracker/screens/trips/my-trips.dart';
-import 'package:provider/provider.dart';
-import 'package:travel_expense_tracker/services/authentication-service.dart';
+import 'package:travel_expense_tracker/services/auth-service.dart';
 import 'package:travel_expense_tracker/services/user-handler.dart';
 
 class SignUp extends StatefulWidget {
@@ -16,6 +15,8 @@ class _SignUpState extends State<SignUp> {
   final formKey = GlobalKey<FormState>();
   bool obsText = true;
 
+  AuthService authService = new AuthService();
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController password2Controller = TextEditingController();
@@ -27,23 +28,18 @@ class _SignUpState extends State<SignUp> {
         isLoading = true;
       });
 
-      context
-          .read<AuthenticationService>()
+      authService
           .signUp(
               email: emailController.text, password: passwordController.text)
-          .then((_) {
-        new UserHandler().createUser(email: emailController.text);
-
+          .then((_) async {
+        await new UserHandler().createUser();
+        Navigator.of(context)
+            .push(PageRouteBuilder(pageBuilder: (context, _, __) => MyTrips()));
+      }).catchError((e) {
+        print('signUpUser Error: $e');
         setState(() {
           isLoading = false;
         });
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MyTrips()));
-      }).catchError((_) {
-        setState(() {
-          isLoading = false;
-        });
-        print('User already exists');
       });
     } else if (formKey.currentState.validate() &&
         passwordController.text != password2Controller.text) {
@@ -56,12 +52,12 @@ class _SignUpState extends State<SignUp> {
       isLoading = true;
     });
 
-    context.read<AuthenticationService>().googleLogin().then((_) {
-      new UserHandler().createUser(email: "");
-
-      setState(() {
-        isLoading = false;
-      });
+    authService.googleLogin().then((_) {
+      print('googleSignUpUser Successful');
+      Navigator.of(context)
+          .push(PageRouteBuilder(pageBuilder: (context, _, __) => MyTrips()));
+    }).catchError((e) {
+      print('googleSignUpUser Error: $e');
     });
   }
 
