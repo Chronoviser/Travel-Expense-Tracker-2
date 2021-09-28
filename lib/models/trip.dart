@@ -1,4 +1,4 @@
-import 'package:travel_expense_tracker/models/record.dart';
+import 'record.dart';
 import 'activity.dart';
 
 class Trip {

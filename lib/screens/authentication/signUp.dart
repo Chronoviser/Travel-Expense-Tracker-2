@@ -1,9 +1,10 @@
+import 'package:Travel_Expense_Tracker/services/toast-service.dart';
 import 'package:flutter/material.dart';
-import 'package:travel_expense_tracker/constants/custom-colors.dart';
-import 'package:travel_expense_tracker/screens/authentication/signIn.dart';
-import 'package:travel_expense_tracker/screens/trips/my-trips.dart';
-import 'package:travel_expense_tracker/services/auth-service.dart';
-import 'package:travel_expense_tracker/services/user-handler.dart';
+import '../../constants/custom-colors.dart';
+import 'signIn.dart';
+import '../trips/my-trips.dart';
+import '../../services/auth-service.dart';
+import '../../services/user-handler.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -32,18 +33,18 @@ class _SignUpState extends State<SignUp> {
           .signUp(
               email: emailController.text, password: passwordController.text)
           .then((_) async {
-        await new UserHandler().createUser();
+        await new UserHandler().createUser(context);
         Navigator.of(context)
             .push(PageRouteBuilder(pageBuilder: (context, _, __) => MyTrips()));
       }).catchError((e) {
-        print('signUpUser Error: $e');
         setState(() {
           isLoading = false;
         });
+        ToastService.errorToast(context: context, message: e.message);
       });
     } else if (formKey.currentState.validate() &&
         passwordController.text != password2Controller.text) {
-      print('passwords don\'t match');
+      ToastService.errorToast(context: context, message: "Password don't match");
     }
   }
 
@@ -52,12 +53,14 @@ class _SignUpState extends State<SignUp> {
       isLoading = true;
     });
 
-    authService.googleLogin().then((_) {
-      print('googleSignUpUser Successful');
+    authService.googleLogin(context).then((_) {
       Navigator.of(context)
           .push(PageRouteBuilder(pageBuilder: (context, _, __) => MyTrips()));
     }).catchError((e) {
-      print('googleSignUpUser Error: $e');
+      setState(() {
+        isLoading = false;
+      });
+      ToastService.errorToast(context: context, message: e.message);
     });
   }
 

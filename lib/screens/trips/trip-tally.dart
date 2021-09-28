@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:travel_expense_tracker/constants/custom-colors.dart';
-import 'package:travel_expense_tracker/models/trip.dart';
+import '../../constants/custom-colors.dart';
+import '../../models/trip.dart';
 
 class TripTally extends StatefulWidget {
   final Trip tripData;

@@ -1,8 +1,9 @@
+import 'package:Travel_Expense_Tracker/services/toast-service.dart';
 import 'package:flutter/material.dart';
-import 'package:travel_expense_tracker/constants/custom-colors.dart';
-import 'package:travel_expense_tracker/screens/authentication/signUp.dart';
-import 'package:travel_expense_tracker/screens/trips/my-trips.dart';
-import 'package:travel_expense_tracker/services/auth-service.dart';
+import '../../constants/custom-colors.dart';
+import 'signUp.dart';
+import '../trips/my-trips.dart';
+import '../../services/auth-service.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -28,15 +29,14 @@ class SignInState extends State<SignIn> {
       authService
           .signIn(
               email: emailController.text, password: passwordController.text)
-          .then((_) {
-        print('signInUser Successful');
+          .then((_) async {
         Navigator.of(context)
             .push(PageRouteBuilder(pageBuilder: (context, _, __) => MyTrips()));
       }).catchError((e) {
-        print('signInUser Error: $e');
         setState(() {
           isLoading = false;
         });
+        ToastService.errorToast(context: context, message: e.message);
       });
     }
   }
@@ -46,15 +46,14 @@ class SignInState extends State<SignIn> {
       isLoading = true;
     });
 
-    authService.googleLogin().then((_) {
-      print('googleSignInUser Successful');
+    authService.googleLogin(context).then((_) {
       Navigator.of(context)
           .push(PageRouteBuilder(pageBuilder: (context, _, __) => MyTrips()));
     }).catchError((e) {
-      print('googleSignInUser Error: $e');
       setState(() {
         isLoading = false;
       });
+      ToastService.errorToast(context: context, message: e.message);
     });
   }
 

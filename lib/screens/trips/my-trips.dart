@@ -1,16 +1,17 @@
+import 'package:Travel_Expense_Tracker/services/toast-service.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:travel_expense_tracker/constants/custom-colors.dart';
-import 'package:travel_expense_tracker/constants/global-user.dart';
-import 'package:travel_expense_tracker/models/trip.dart';
-import 'package:travel_expense_tracker/screens/authentication/signIn.dart';
-import 'package:travel_expense_tracker/screens/trips/trip-details.dart';
-import 'package:travel_expense_tracker/services/auth-service.dart';
-import 'package:intl/intl.dart';
-import 'package:travel_expense_tracker/services/trip-handler.dart';
-import 'package:travel_expense_tracker/services/user-handler.dart';
+import '../../constants/custom-colors.dart';
+import '../../constants/global-user.dart';
+import '../../models/trip.dart';
+import '../authentication/signIn.dart';
+import '../trips/trip-details.dart';
+import '../../services/auth-service.dart';
+import '../../services/trip-handler.dart';
+import '../../services/user-handler.dart';
 
 class MyTrips extends StatefulWidget {
   @override
@@ -27,13 +28,16 @@ class _MyTripsState extends State<MyTrips> {
   AuthService authService = new AuthService();
 
   signOut() async {
+
     setState(() {
       fetchingData = true;
     });
 
     GlobalUser.trips = [];
-    GlobalUser.email = "";
-    GlobalUser.uid = "";
+    GlobalUser.email = null;
+    GlobalUser.uid = null;
+
+    ToastService.msgToast(context: context, message: 'Bye, See you soon!');
 
     await authService.signOut();
 
@@ -249,6 +253,9 @@ class _MyTripsState extends State<MyTrips> {
                 joinTripDialog(context).then((val) {
                   if (val != null && val.length > 9) {
                     joinTrip(val);
+                  } else {
+                    ToastService.errorToast(
+                        message: 'Invalid Trip Id', context: context);
                   }
                 });
               },
@@ -313,18 +320,22 @@ class _MyTripsState extends State<MyTrips> {
   @override
   void initState() {
     super.initState();
-
-    print('Idhar Aagaya apun!');
-
     fetchUserInfo();
   }
 
-  fetchUserInfo() async {
-    User currentUser = FirebaseAuth.instance.currentUser;
-    GlobalUser.uid = currentUser.uid;
-    GlobalUser.email = currentUser.email;
-    await new UserHandler().fetchUserTrips(email: GlobalUser.email);
-    setState(() {});
+  fetchUserInfo() {
+    if (GlobalUser.email == null || GlobalUser.uid == null) {
+      User currentUser = FirebaseAuth.instance.currentUser;
+      GlobalUser.uid = currentUser.uid;
+      GlobalUser.email = currentUser.email;
+    }
+
+    new UserHandler().fetchUserTrips(email: GlobalUser.email).then((_) {
+      setState(() {});
+      ToastService.msgToast(context: context, message: 'Welcome 🙏');
+    }).catchError((e) {
+      ToastService.errorToast(context: context, message: e.message);
+    });
   }
 
   showNetworkError() {
@@ -332,29 +343,28 @@ class _MyTripsState extends State<MyTrips> {
         .showSnackBar(SnackBar(content: Text('Network Error!')));
   }
 
-  joinTrip(String tripId) async {
+  joinTrip(String tripId) {
     setState(() {
       fetchingData = true;
     });
 
-    print('before');
-    print(GlobalUser.trips);
-
-    await userHandler.joinTrip(tripId);
-
-    print('after');
-    print(GlobalUser.trips);
-
-    setState(() {
-      fetchingData = false;
+    userHandler.joinTrip(tripId).then((_) {
+      setState(() {
+        fetchingData = false;
+      });
+    }).catchError((e) {
+      ToastService.errorToast(message: e.message, context: context);
+      setState(() {
+        fetchingData = false;
+      });
     });
   }
 
   createTrip(newTrip) async {
-    await tripHandler.createTrip(newTrip);
+    await tripHandler.createTrip(newTrip, context);
   }
 
   deleteTrip(id) async {
-    await tripHandler.deleteTrip(id);
+    await tripHandler.deleteTrip(id, context);
   }
 }

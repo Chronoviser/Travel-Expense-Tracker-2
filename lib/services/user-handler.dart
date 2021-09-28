@@ -1,7 +1,9 @@
+import 'package:Travel_Expense_Tracker/services/toast-service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:travel_expense_tracker/constants/global-user.dart';
-import 'package:travel_expense_tracker/models/app-user.dart';
+import 'package:flutter/cupertino.dart';
+import '../constants/global-user.dart';
+import '../models/app-user.dart';
 
 class UserHandler {
   CollectionReference userReference =
@@ -9,42 +11,33 @@ class UserHandler {
 
   final User user = FirebaseAuth.instance.currentUser;
 
-  Future<bool> joinTrip(String tripId) async {
-    try {
-      GlobalUser.trips.add(tripId);
-      AppUser user = new AppUser(GlobalUser.email, GlobalUser.trips);
-      await userReference.doc(GlobalUser.uid).update(user.AppUserToJSON());
-      return true;
-    } catch (e) {
-      print(e.message);
-      return false;
-    }
+  joinTrip(String tripId) async {
+    GlobalUser.trips.add(tripId);
+    AppUser user = new AppUser(GlobalUser.email, GlobalUser.trips);
+    await userReference.doc(GlobalUser.uid).update(user.AppUserToJSON());
   }
 
-  Future<bool> createUser() async {
+  Future<bool> createUser(BuildContext context) async {
     AppUser newUser = new AppUser(user.email, []);
     try {
-      print(4);
       await userReference.doc(user.uid).set(newUser.AppUserToJSON());
-      print(5);
       return true;
     } catch (e) {
-      print(e.message);
+      ToastService.errorToast(message: e.message, context: context);
       return false;
     }
   }
 
   fetchUserTrips({String email}) async {
-    try {
-      await userReference.where('email', isEqualTo: email).get().then((val) {
-        if (val.docs.length > 0) {
-          GlobalUser.trips.clear();
+    await userReference.where('email', isEqualTo: email).get().then((val) {
+      if (val.docs.length > 0) {
+        GlobalUser.trips.clear();
 
-          val.docs[0]
-              .data()['trips']
-              .forEach((e) => GlobalUser.trips.add(e.toString()));
-        }
-      });
-    } catch (e) {}
+        val.docs[0]
+            .data()['trips']
+            .forEach((e) => GlobalUser.trips.add(e.toString()));
+      }
+    });
   }
+
 }

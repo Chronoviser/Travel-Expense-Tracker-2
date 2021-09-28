@@ -1,4 +1,4 @@
-import 'package:travel_expense_tracker/models/spending.dart';
+import 'spending.dart';
 
 class Activity {
   String activity;

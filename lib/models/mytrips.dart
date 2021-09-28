@@ -1,5 +1,5 @@
-import 'package:travel_expense_tracker/constants/global-user.dart';
-import 'package:travel_expense_tracker/models/trip.dart';
+import '../constants/global-user.dart';
+import 'trip.dart';
 
 class MyTrips {
   static List<Trip> trips = new List();

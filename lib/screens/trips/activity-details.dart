@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:travel_expense_tracker/constants/custom-colors.dart';
-import 'package:travel_expense_tracker/models/activity.dart';
-import 'package:travel_expense_tracker/models/spending.dart';
+import '../../constants/custom-colors.dart';
+import '../../models/activity.dart';
+import '../../models/spending.dart';
 
 class ActivityDetails extends StatefulWidget {
   final Activity activity;

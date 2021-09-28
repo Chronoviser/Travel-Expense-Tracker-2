@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:travel_expense_tracker/constants/custom-colors.dart';
-import 'package:travel_expense_tracker/models/activity.dart';
-import 'package:travel_expense_tracker/models/record.dart';
-import 'package:travel_expense_tracker/models/spending.dart';
-import 'package:travel_expense_tracker/models/trip.dart';
-import 'package:travel_expense_tracker/screens/trips/activity-details.dart';
-import 'package:travel_expense_tracker/screens/trips/trip-tally.dart';
-import 'package:travel_expense_tracker/services/trip-handler.dart';
+import '../../constants/custom-colors.dart';
+import '../../models/activity.dart';
+import '../../models/record.dart';
+import '../../models/spending.dart';
+import '../../models/trip.dart';
+import '../trips/activity-details.dart';
+import '../trips/trip-tally.dart';
+import '../../services/trip-handler.dart';
 
 class TripDetail extends StatefulWidget {
   final Trip tripData;
@@ -433,7 +433,7 @@ class _TripDetailState extends State<TripDetail> {
   createActivity(Activity activity) async {
     updateTally(activity);
     currentTrip.activities.add(activity);
-    var response = await tripHandler.updateTrip(currentTrip, widget.docId);
+    var response = await tripHandler.updateTrip(currentTrip, widget.docId, context);
     if (response)
       setState(() {
         updatesDone = true;
@@ -448,7 +448,7 @@ class _TripDetailState extends State<TripDetail> {
     deUpdateTally(activity);
     int index = currentTrip.activities.indexOf(activity);
     currentTrip.activities.removeAt(index);
-    var response = await tripHandler.updateTrip(currentTrip, widget.docId);
+    var response = await tripHandler.updateTrip(currentTrip, widget.docId, context);
     if (response)
       setState(() {
         updatesDone = true;

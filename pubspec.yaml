@@ -1,4 +1,4 @@
-name: Travel Expense Tracker
+name: Travel_Expense_Tracker
 description: A new Flutter application.
 
 # The following line prevents the package from being accidentally published to
@@ -35,6 +35,7 @@ dependencies:
   datetime_picker_formfield:
   dio:
   provider:
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:
